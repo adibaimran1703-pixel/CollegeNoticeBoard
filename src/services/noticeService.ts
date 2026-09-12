@@ -17,16 +17,12 @@ const mapNotice = (row: any): Notice => {
     creator: {
       id: creator.id || row.creator_id,
       name: creator.name || 'Unknown User',
-      email: creator.email || '',
       role: creator.role || 'student',
       department: creator.department || 'CSE',
-      year: creator.year,
       avatar:
         creator.avatar ||
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      savedNoticeIds: [],
-      upvotedNoticeIds: [],
-      createdAt: creator.created_at || row.created_at,
+      
     },
     createdAt: row.created_at,
     updatedAt: row.updated_at,
