@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Department, TargetYear } from '../../types';
-
 import {
   GraduationCap,
   Eye,
@@ -116,7 +115,9 @@ export const AuthPage: React.FC = () => {
       errors.password = 'Password must be at least 6 characters.';
     }
 
-    if (signUpPassword !== signUpConfirmPassword) {
+    if (!signUpConfirmPassword) {
+      errors.confirmPassword = 'Please confirm your password.';
+    } else if (signUpPassword !== signUpConfirmPassword) {
       errors.confirmPassword = 'Passwords do not match.';
     }
 
@@ -144,44 +145,19 @@ export const AuthPage: React.FC = () => {
       return;
     }
 
-    /*
-     * Signup succeeded.
-     *
-     * We now immediately try to log the new user in.
-     * If email confirmation is disabled in Supabase,
-     * this will create a session and the app will enter
-     * the dashboard automatically.
-     *
-     * If email confirmation is enabled, Supabase will
-     * reject the login until the email is confirmed.
-     */
-
-    const loginResult = await login(
-      signUpEmail,
-      signUpPassword
-    );
-
-    console.log('AUTO LOGIN RESULT:', loginResult);
-
-    if (loginResult.success) {
-      return;
-    }
-
-    setSignUpErrors({
-      general:
-        loginResult.error ||
-        'Account created. Please sign in with your new account.',
-    });
-
     setMode('signin');
-
     setSignInEmail(signUpEmail);
     setSignInPassword('');
+    setSignUpErrors({});
+
+    setSignInErrors({
+      general:
+        'Account created successfully! Please check your email and confirm your account before signing in.',
+    });
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-900 text-white shadow-md mb-4">
           <GraduationCap className="w-8 h-8 text-teal-400" />
@@ -198,9 +174,7 @@ export const AuthPage: React.FC = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-sm border border-slate-200 rounded-2xl sm:px-10">
-
           <div className="flex border-b border-slate-200 mb-6">
-
             <button
               type="button"
               onClick={() => {
@@ -230,22 +204,19 @@ export const AuthPage: React.FC = () => {
             >
               Create Account
             </button>
-
           </div>
 
           <div className="mb-6 p-3 bg-slate-50 rounded-xl border border-slate-200">
-
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 mb-2">
               <ShieldCheck className="w-4 h-4 text-teal-600" />
               <span>Instant Evaluator Access:</span>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-
               <button
                 type="button"
                 onClick={() => loginAsPreset('student')}
-                className="px-2.5 py-1.5 text-xs font-medium bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded-lg shadow-2xs transition-colors text-center"
+                className="px-2.5 py-1.5 text-xs font-medium bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded-lg shadow-sm transition-colors text-center"
               >
                 👤 Student (Alex)
               </button>
@@ -253,11 +224,10 @@ export const AuthPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => loginAsPreset('admin')}
-                className="px-2.5 py-1.5 text-xs font-medium bg-blue-900 hover:bg-blue-800 text-white rounded-lg shadow-2xs transition-colors text-center"
+                className="px-2.5 py-1.5 text-xs font-medium bg-blue-900 hover:bg-blue-800 text-white rounded-lg shadow-sm transition-colors text-center"
               >
                 🛡️ Admin (Dr. Sarah)
               </button>
-
             </div>
           </div>
 
@@ -267,9 +237,8 @@ export const AuthPage: React.FC = () => {
               className="space-y-4"
               noValidate
             >
-
               {signInErrors.general && (
-                <div className="p-3 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg">
+                <div className="p-3 text-xs font-medium text-blue-800 bg-blue-50 border border-blue-200 rounded-lg">
                   {signInErrors.general}
                 </div>
               )}
@@ -305,9 +274,7 @@ export const AuthPage: React.FC = () => {
               </div>
 
               <div>
-
                 <div className="flex items-center justify-between mb-1.5">
-
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     Password
                   </label>
@@ -319,11 +286,9 @@ export const AuthPage: React.FC = () => {
                   >
                     Forgot password?
                   </button>
-
                 </div>
 
                 <div className="relative">
-
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <Lock className="w-4 h-4" />
                   </div>
@@ -354,7 +319,6 @@ export const AuthPage: React.FC = () => {
                       <Eye className="w-4 h-4" />
                     )}
                   </button>
-
                 </div>
 
                 {signInErrors.password && (
@@ -362,7 +326,6 @@ export const AuthPage: React.FC = () => {
                     {signInErrors.password}
                   </p>
                 )}
-
               </div>
 
               <button
@@ -379,7 +342,6 @@ export const AuthPage: React.FC = () => {
                   </>
                 )}
               </button>
-
             </form>
           )}
 
@@ -389,7 +351,6 @@ export const AuthPage: React.FC = () => {
               className="space-y-3.5"
               noValidate
             >
-
               {signUpErrors.general && (
                 <div className="p-3 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg">
                   {signUpErrors.general}
@@ -397,13 +358,11 @@ export const AuthPage: React.FC = () => {
               )}
 
               <div>
-
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   Full Name
                 </label>
 
                 <div className="relative">
-
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <UserIcon className="w-4 h-4" />
                   </div>
@@ -419,7 +378,6 @@ export const AuthPage: React.FC = () => {
                         : 'border-slate-300 text-slate-900 focus:ring-blue-900'
                     }`}
                   />
-
                 </div>
 
                 {signUpErrors.name && (
@@ -427,17 +385,14 @@ export const AuthPage: React.FC = () => {
                     {signUpErrors.name}
                   </p>
                 )}
-
               </div>
 
               <div>
-
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   University Email
                 </label>
 
                 <div className="relative">
-
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <Mail className="w-4 h-4" />
                   </div>
@@ -453,7 +408,6 @@ export const AuthPage: React.FC = () => {
                         : 'border-slate-300 text-slate-900 focus:ring-blue-900'
                     }`}
                   />
-
                 </div>
 
                 {signUpErrors.email && (
@@ -461,19 +415,15 @@ export const AuthPage: React.FC = () => {
                     {signUpErrors.email}
                   </p>
                 )}
-
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-
                 <div>
-
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Department
                   </label>
 
                   <div className="relative">
-
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                       <Building2 className="w-4 h-4" />
                     </div>
@@ -481,9 +431,7 @@ export const AuthPage: React.FC = () => {
                     <select
                       value={signUpDepartment}
                       onChange={(e) =>
-                        setSignUpDepartment(
-                          e.target.value as Department
-                        )
+                        setSignUpDepartment(e.target.value as Department)
                       }
                       className="block w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-900 focus:outline-none"
                     >
@@ -497,19 +445,15 @@ export const AuthPage: React.FC = () => {
                       </option>
                       <option value="Other">Other</option>
                     </select>
-
                   </div>
-
                 </div>
 
                 <div>
-
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Year of Study
                   </label>
 
                   <div className="relative">
-
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                       <Calendar className="w-4 h-4" />
                     </div>
@@ -517,9 +461,7 @@ export const AuthPage: React.FC = () => {
                     <select
                       value={signUpYear}
                       onChange={(e) =>
-                        setSignUpYear(
-                          e.target.value as TargetYear
-                        )
+                        setSignUpYear(e.target.value as TargetYear)
                       }
                       className="block w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-900 focus:outline-none"
                     >
@@ -528,21 +470,16 @@ export const AuthPage: React.FC = () => {
                       <option value="3rd Year">3rd Year</option>
                       <option value="4th Year">4th Year</option>
                     </select>
-
                   </div>
-
                 </div>
-
               </div>
 
               <div>
-
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   Password
                 </label>
 
                 <div className="relative">
-
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <Lock className="w-4 h-4" />
                   </div>
@@ -550,9 +487,7 @@ export const AuthPage: React.FC = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={signUpPassword}
-                    onChange={(e) =>
-                      setSignUpPassword(e.target.value)
-                    }
+                    onChange={(e) => setSignUpPassword(e.target.value)}
                     placeholder="••••••••"
                     className={`block w-full pl-9 pr-10 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 ${
                       signUpErrors.password
@@ -563,9 +498,7 @@ export const AuthPage: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowPassword(!showPassword)
-                    }
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
                   >
                     {showPassword ? (
@@ -574,7 +507,6 @@ export const AuthPage: React.FC = () => {
                       <Eye className="w-4 h-4" />
                     )}
                   </button>
-
                 </div>
 
                 {signUpErrors.password && (
@@ -582,32 +514,23 @@ export const AuthPage: React.FC = () => {
                     {signUpErrors.password}
                   </p>
                 )}
-
               </div>
 
               <div>
-
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   Confirm Password
                 </label>
 
                 <div className="relative">
-
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <Lock className="w-4 h-4" />
                   </div>
 
                   <input
-                    type={
-                      showConfirmPassword
-                        ? 'text'
-                        : 'password'
-                    }
+                    type={showConfirmPassword ? 'text' : 'password'}
                     value={signUpConfirmPassword}
                     onChange={(e) =>
-                      setSignUpConfirmPassword(
-                        e.target.value
-                      )
+                      setSignUpConfirmPassword(e.target.value)
                     }
                     placeholder="••••••••"
                     className={`block w-full pl-9 pr-10 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 ${
@@ -620,9 +543,7 @@ export const AuthPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() =>
-                      setShowConfirmPassword(
-                        !showConfirmPassword
-                      )
+                      setShowConfirmPassword(!showConfirmPassword)
                     }
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
                   >
@@ -632,17 +553,13 @@ export const AuthPage: React.FC = () => {
                       <Eye className="w-4 h-4" />
                     )}
                   </button>
-
                 </div>
 
-                {signUpConfirmPassword &&
-                  signUpPassword !==
-                    signUpConfirmPassword && (
-                    <p className="mt-1 text-xs text-red-600 font-medium">
-                      Passwords do not match.
-                    </p>
-                  )}
-
+                {signUpErrors.confirmPassword && (
+                  <p className="mt-1 text-xs text-red-600 font-medium">
+                    {signUpErrors.confirmPassword}
+                  </p>
+                )}
               </div>
 
               <button
@@ -659,12 +576,10 @@ export const AuthPage: React.FC = () => {
                   </>
                 )}
               </button>
-
             </form>
           )}
 
           <div className="mt-6 text-center text-xs text-slate-500">
-
             {mode === 'signin' ? (
               <span>
                 Don&apos;t have an account?{' '}
@@ -688,36 +603,29 @@ export const AuthPage: React.FC = () => {
                 </button>
               </span>
             )}
-
           </div>
-
         </div>
       </div>
 
       {showForgotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
           <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200">
-
             <h3 className="text-base font-bold text-slate-900 mb-2">
               Reset Password
             </h3>
 
             {forgotSent ? (
               <div>
-
                 <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 p-3 rounded-lg border border-emerald-200 mb-4 text-xs font-medium">
-
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
 
                   <span>
-                    Password reset instructions sent to{' '}
-                    {forgotEmail}
+                    Password reset instructions sent to {forgotEmail}
                   </span>
-
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => {
                     setShowForgotModal(false);
                     setForgotSent(false);
@@ -727,33 +635,26 @@ export const AuthPage: React.FC = () => {
                 >
                   Close
                 </button>
-
               </div>
             ) : (
               <div>
-
                 <p className="text-xs text-slate-500 mb-4">
-                  Enter your registered campus email and we
-                  will send a password reset link.
+                  Enter your registered campus email and we will send a
+                  password reset link.
                 </p>
 
                 <input
                   type="email"
                   value={forgotEmail}
-                  onChange={(e) =>
-                    setForgotEmail(e.target.value)
-                  }
+                  onChange={(e) => setForgotEmail(e.target.value)}
                   placeholder="name@university.edu"
                   className="block w-full px-3 py-2 text-sm border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 mb-4"
                 />
 
                 <div className="flex justify-end gap-2">
-
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowForgotModal(false)
-                    }
+                    onClick={() => setShowForgotModal(false)}
                     className="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg"
                   >
                     Cancel
@@ -770,16 +671,12 @@ export const AuthPage: React.FC = () => {
                   >
                     Send Reset Link
                   </button>
-
                 </div>
-
               </div>
             )}
-
           </div>
         </div>
       )}
-
     </div>
   );
 };
