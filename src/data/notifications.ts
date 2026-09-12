@@ -1,0 +1,52 @@
+import { NotificationItemType } from '../types';
+
+export const INITIAL_NOTIFICATIONS: NotificationItemType[] = [
+  {
+    id: 'notif_upvote_1',
+    userId: 'usr_student_alex',
+    type: 'upvote',
+    title: 'New Upvotes on Your Notice',
+    message: 'Your announcement "Hands-on Generative AI Bootcamp" has reached 85+ student upvotes!',
+    createdAt: '2026-09-10T08:30:00Z',
+    isRead: false,
+    noticeId: 'not_ai_ml_workshop',
+  },
+  {
+    id: 'notif_internship_1',
+    userId: 'usr_student_alex',
+    type: 'notice',
+    title: 'New Placement Alert',
+    message: 'Placement Cell posted Summer 2027 Software Engineering Internships with Google and Microsoft.',
+    createdAt: '2026-09-09T17:45:00Z',
+    isRead: false,
+    noticeId: 'not_google_internship',
+  },
+  {
+    id: 'notif_event_1',
+    userId: 'usr_student_alex',
+    type: 'event',
+    title: 'Upcoming Event Reminder',
+    message: 'You are registered for "Inter-College Hackathon 2026 - Opening Ceremony" coming up on Sept 26.',
+    createdAt: '2026-09-09T10:15:00Z',
+    isRead: true,
+  },
+  {
+    id: 'notif_expiry_1',
+    userId: 'usr_student_alex',
+    type: 'expiry',
+    title: 'Notice Expiring Soon',
+    message: 'Freshers Orientation notices will expire on Sept 22. Archive or extend if needed.',
+    createdAt: '2026-09-08T12:00:00Z',
+    isRead: true,
+    noticeId: 'not_freshers_orientation',
+  },
+  {
+    id: 'notif_system_1',
+    userId: 'usr_student_alex',
+    type: 'system',
+    title: 'Welcome to Campus Notice Board',
+    message: 'Discover announcements, bookmark posts, and stay synced with your academic department.',
+    createdAt: '2026-09-01T09:00:00Z',
+    isRead: true,
+  },
+];
